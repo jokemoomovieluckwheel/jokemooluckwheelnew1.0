@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>วงล้อสุ่มรางวัล JOKEMOO</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image" href="logo.png">
+    <script src="api-config.js"></script>
+</head>
+<body>
+    <div class="page-container">
+        <div class="top-section">
+            <div class="wheel-section">
+                <div class="wheel-container">
+                    <div class="pointer"></div>
+                    <canvas id="wheel" class="wheel" width="380" height="380"></canvas>
+                    <div class="center-circle">🎁</div>
+                </div>
+                <button class="spin-btn" id="spinBtn" onclick="spin()" disabled>กรุณาใส่โค้ด</button>
+            </div>
+
+            <div class="code-card">
+                <div class="code-card-header">
+                    <div class="code-card-icon">🔑</div>
+                    <div>
+                        <div class="code-card-title">กรอกโค้ดเพื่อหมุนวงล้อ</div>
+                        <div class="code-card-subtitle">ใส่โค้ดที่ได้รับจากผู้ดูแลระบบ</div>
+                    </div>
+                </div>
+
+                <div class="code-input-group">
+                    <label class="code-input-label">รหัสโค้ด</label>
+                    <input type="text" class="code-input" id="codeInput" placeholder="กรอกโค้ดเช่น ABC123" maxlength="12">
+                </div>
+
+                <button class="verify-btn" onclick="verifyCode()">
+                    <span>🔍</span> ตรวจสอบโค้ด
+                </button>
+
+                <div class="code-status" id="codeStatus"></div>
+
+                <div class="spins-info" id="spinsInfo">
+                    <div class="spins-info-row">
+                        <span class="spins-info-label">🎫 สิทธิ์คงเหลือ</span>
+                        <span class="spins-info-value" id="spinsValue">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <div class="history-grid">
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <h3>🔑 ประวัติการใส่โค้ด</h3>
+                        <button class="clear-btn" onclick="clearCodeHistory()">ล้าง</button>
+                    </div>
+                    <div class="history-list" id="codeHistoryList">
+                        <div class="empty-history">ยังไม่มีประวัติ</div>
+                    </div>
+                </div>
+
+                <div class="history-card">
+                    <div class="history-card-header">
+                        <h3>🎁 ประวัติการสุ่ม</h3>
+                        <button class="clear-btn" onclick="clearSpinHistory()">ล้าง</button>
+                    </div>
+                    <div class="history-list" id="spinHistoryList">
+                        <div class="empty-history">ยังไม่มีประวัติ</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-section">
+            <div class="footer-title">
+                <span>🎁</span> รางวัลในวงล้อ
+            </div>
+            <div class="prizes-grid" id="prizesGrid"></div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="footer-copyright">© 2023 วงล้อรับของรางวัล ของร้าน JOKEMOO<br>ระบบสุ่มวงล้อรับโค้ดจากแอดมินเพจได้เลย · โค้ดที่สร้างจากหน้าสร้างโค้ดใช้ได้ที่นี่ (แม้คนละเครื่อง)</div>
+            <div class="footer-links">
+                <a href="https://www.facebook.com/share/1DFQUZA9NV/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" class="footer-link facebook">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    Jokemoo Movie
+                </a>
+                <a href="https://line.me/ti/p/~106zyrpm" target="_blank" rel="noopener noreferrer" class="footer-link line">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/></svg>
+                    @106zyrpm
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="result-display" id="resultDisplay">
+        <div class="result-content">
+            <div class="result-icon">🎉</div>
+            <h2>แจ้งเตือนผลการสุ่ม</h2>
+            <div class="result-subtitle">รายละเอียดการหมุนวงล้อ</div>
+            <div class="result-detail-list">
+                <div class="result-detail-row">
+                    <span class="result-detail-label">📅 วันที่</span>
+                    <span class="result-detail-value" id="resultDate"></span>
+                </div>
+                <div class="result-detail-row">
+                    <span class="result-detail-label">🕐 เวลา</span>
+                    <span class="result-detail-value" id="resultTime"></span>
+                </div>
+                <div class="result-detail-row">
+                    <span class="result-detail-label">🔑 โค้ดที่ใช้</span>
+                    <span class="result-detail-value result-code" id="resultCodeUsed"></span>
+                </div>
+                <div class="result-detail-row result-prize-row">
+                    <span class="result-detail-label">🎁 ได้รับ</span>
+                    <span class="result-detail-value result-prize" id="prizeText"></span>
+                </div>
+            </div>
+            <button onclick="closeResult()">รับทราบ</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
